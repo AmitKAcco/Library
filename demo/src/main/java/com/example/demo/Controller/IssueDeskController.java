@@ -28,8 +28,8 @@ public class IssueDeskController {
         return ResponseEntity.ok().body(this.issueDeskImplement.issueBook(issue));
     }
 
-    @PutMapping("/Issue/{IssueID}")
-    private ResponseEntity<IssueDesk> updateBook(@PathVariable long issueID, @RequestBody IssueDesk issueDesk){
+    @PostMapping ("/returnBook")
+    private ResponseEntity<IssueDesk> updateBook(@RequestBody IssueDesk issueDesk){
         // book.setBookId(bookId);
         return ResponseEntity.ok().body(this.issueDeskImplement.returnBook(issueDesk));
     }

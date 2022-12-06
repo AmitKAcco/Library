@@ -1,6 +1,8 @@
 package com.example.demo.Model;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /* Name doesn't conflict */
 
@@ -35,6 +37,9 @@ public class Userr {
     @OneToOne(cascade = { CascadeType.ALL})
     @JoinColumn(name = "walletID")
     private Wallet wallet;
+
+    @OneToMany(cascade = { CascadeType.ALL})
+    private Set<RentalHistory> rent = new HashSet<>();
     public Integer getBookCount() {
         return bookCount;
     }
@@ -65,6 +70,14 @@ public class Userr {
     public boolean isStatus() {
 
         return status;
+    }
+
+    public Set<RentalHistory> getRent() {
+        return rent;
+    }
+
+    public void setRent(Set<RentalHistory> rent) {
+        this.rent = rent;
     }
 
     public void setStatus(boolean status) {

@@ -30,6 +30,9 @@ public class IssueDeskImplement implements IssuseDeskInterface {
     @Autowired
     private InventoryRepo inventoryRepo;
 
+    @Autowired
+    private RentalReepo rentalReepo;
+
     @Override
     public IssueDesk issueBook(IssueDesk obj) {
         Optional<Book> bookObj = bookRepo.findById(obj.getCurrBookId());
@@ -37,6 +40,7 @@ public class IssueDeskImplement implements IssuseDeskInterface {
         Optional<Wallet> walletObj = walletRepo.findById(obj.getCurrWalletId());
         try {
             // code to create count and to perform number of count
+
             Inventory ix = new Inventory();
             List<Inventory> inventoryObj = inventoryRepo.findAll();
             for(Inventory i : inventoryObj) {
@@ -61,6 +65,9 @@ public class IssueDeskImplement implements IssuseDeskInterface {
             Book b = bookObj.get();
             Userr u = userrObj.get();
             Wallet w = walletObj.get();
+            RentalHistory r = new RentalHistory();
+            r.setUserId(u.getUserId());
+            r.setBookName(b.getBookName());
             if(!u.getUserId().equals( w.getUserId())){
                 throw new RuntimeException("Wallet belong to other user " + u.getUserId() + " " + w.getUserId());
             }
@@ -82,6 +89,7 @@ public class IssueDeskImplement implements IssuseDeskInterface {
                     w.deductMoney((long) (w.getMoney() - .2 * b.getPrice()));
                     u.setLastBookId(b.getBookId());
                     u.setBookCount(u.getBookCount() + 1);
+                    this.rentalReepo.save(r);
                     return this.issueDeskRepo.save(obj);
                 }
             }
@@ -101,7 +109,9 @@ public class IssueDeskImplement implements IssuseDeskInterface {
             Book b = bookObj.get();
             Userr u = userrObj.get();
             Wallet w = walletObj.get();
-
+            RentalHistory r = new RentalHistory();
+            r.setUserId(u.getUserId());
+            r.setBookName(b.getBookName());
             TransactionHistory t = new TransactionHistory();
             t.setUserId(obj.getCurrUserId());
             t.setMoneyAdded((long) (.1 * b.getPrice()));
@@ -109,7 +119,8 @@ public class IssueDeskImplement implements IssuseDeskInterface {
             w.addMoney((long) (w.getMoney() +  .1 * b.getPrice()));
             u.setLastBookId(b.getBookId());
             u.setBookCount(u.getBookCount() - 1);
-            return this.issueBook(obj);
+            this.rentalReepo.save(r);
+            return this.issueDeskRepo.save(obj);
         } else {
             throw new RuntimeException("Invalid Book return");
         }
